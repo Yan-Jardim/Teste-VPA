@@ -19,7 +19,8 @@ const CustomTaskInput = ({
       <h3 className="text-lg font-semibold text-gray-800">
         Post para "{title}"
       </h3>
-      <TextInput showIcon={false} type="text" /> <Divider />
+      <TextInput showIcon={false} type="text" />
+      <Divider />
       <div className="flex space-x-2 mb-1 mt-2">
         <button className="p-2 rounded-md shadow-sm hover:bg-gray-200 border border-[#8F8F8F]">
           <MdOutlineCalendarMonth color="#8F8F8F" />

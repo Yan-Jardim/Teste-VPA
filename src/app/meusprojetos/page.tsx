@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import ProjectDetailsGrid from '@/components/pages/ProjectDetailsGrid';
 
 interface Session {
+  id: number;
   name: string;
   tasks: string[];
 }
@@ -34,14 +35,16 @@ const MeusProjetos: React.FC = () => {
 
       if (selectedProject) {
         selectedProject.session = selectedProject.session?.map((session) =>
-          typeof session === 'string' ? { name: session, tasks: [] } : session
-        );
+          typeof session === 'string'
+            ? { id: Math.random(), name: session, tasks: [] }
+            : session
+        ) as Session[];
         setSelectedProject(selectedProject);
       }
     }
   }, [projectId]);
 
-  const handleUpdateProject = (updatedProject: Project) => {
+  const handleUpdateProject = (updatedProject: Project): void => {
     setSelectedProject(updatedProject);
 
     const projects: Project[] = JSON.parse(
@@ -58,10 +61,14 @@ const MeusProjetos: React.FC = () => {
       <SideMenu />
       <div className="flex-1 ml-64 p-4">
         <div className="flex items-center justify-center">
-          <ProjectDetailsGrid
-            project={selectedProject}
-            onUpdateProject={handleUpdateProject}
-          />
+          {selectedProject ? (
+            <ProjectDetailsGrid
+              project={selectedProject}
+              onUpdateProject={handleUpdateProject}
+            />
+          ) : (
+            <p>Projeto não encontrado.</p>
+          )}
         </div>
       </div>
     </div>

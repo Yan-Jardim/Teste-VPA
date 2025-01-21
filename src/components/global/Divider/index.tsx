@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface DividerProps {
-  text?: string; // Texto opcional no centro do divider
-  className?: string; // Classes adicionais para personalização
+  text?: string;
+  className?: string;
 }
 
 const Divider: React.FC<DividerProps> = ({ text, className }) => {

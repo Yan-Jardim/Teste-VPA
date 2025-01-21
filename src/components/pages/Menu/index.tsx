@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { FiCalendar } from 'react-icons/fi';
 import { HiOutlineFolderOpen } from 'react-icons/hi';
@@ -26,21 +26,23 @@ const SideMenu: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  const toggleDropdown = () => {
-    setIsOpen((prev) => !prev);
-  };
+  const router = useRouter();
+  const todayDate = moment().format('YYYY-MM-DD');
 
-  useEffect(() => {
+  const fetchProjects = useCallback(() => {
     const storedProjects = LocalStorageService.getProjects();
-    if (storedProjects && storedProjects.length > 0) {
+    if (storedProjects?.length) {
       setProjects(storedProjects);
     }
-  }, [isOpen]);
+  }, []);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
   const toggleModal = () => setIsModalOpen((prev) => !prev);
-
-  const todayDate = moment().format('YYYY-MM-DD');
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.name
@@ -56,10 +58,10 @@ const SideMenu: React.FC = () => {
       return;
     }
 
-    const newProject = {
+    const newProject: Project = {
       id: projects.length + 1,
-      name: inputValue,
-      date: moment().format('YYYY-MM-DD'),
+      name: inputValue.trim(),
+      date: todayDate,
     };
 
     const updatedProjects = [...projects, newProject];
@@ -68,8 +70,6 @@ const SideMenu: React.FC = () => {
     setInputValue('');
     toggleModal();
   };
-
-  const router = useRouter();
 
   const handleProjectClick = (projectId: number) => {
     router.push(`/meusprojetos?id=${projectId}`);
@@ -83,7 +83,7 @@ const SideMenu: React.FC = () => {
     >
       {isMenuOpen ? (
         <>
-          <div className="flex items-center justify-between mb-4">
+          <header className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <Image
                 src="/images/avatar.jpg"
@@ -103,7 +103,7 @@ const SideMenu: React.FC = () => {
                 className="w-6 h-6 text-gray-400 cursor-pointer"
               />
             </div>
-          </div>
+          </header>
 
           <Divider />
 
@@ -136,10 +136,9 @@ const SideMenu: React.FC = () => {
             onClick={toggleDropdown}
           >
             <HiOutlineFolderOpen className="w-5 h-5 text-purple-600 mr-2" />
-            <span className="text-sm text-purple-600 flex-1">
+            <span className="text-sm text-purple-600 flex-1 truncate overflow-hidden whitespace-nowrap">
               Meus Projetos
             </span>
-
             <button
               className="text-purple-600 font-bold text-lg mr-2"
               onClick={(event) => {
@@ -156,24 +155,25 @@ const SideMenu: React.FC = () => {
             )}
           </div>
 
-          <div className="flex flex-col mt-4">
-            {isOpen && (
-              <ul className="mt-1">
-                {filteredProjects.map((project) => (
-                  <li
-                    key={project.id}
-                    className="flex items-center p-2 cursor-pointer rounded-lg bg-purple-100 hover:bg-purple-200 mt-2"
-                    onClick={() => handleProjectClick(project.id)}
+          {isOpen && (
+            <ul className="flex flex-col mt-4 max-h-[60%] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-gray-100">
+              {filteredProjects.map((project) => (
+                <li
+                  key={project.id}
+                  className="flex items-center p-2 cursor-pointer rounded-lg bg-purple-100 hover:bg-purple-200 mt-2"
+                  onClick={() => handleProjectClick(project.id)}
+                >
+                  <HiOutlineFolderOpen className="w-5 h-5 text-purple-600 mr-2" />
+                  <span
+                    className="text-sm text-purple-600 truncate overflow-hidden whitespace-nowrap"
+                    title={project.name}
                   >
-                    <HiOutlineFolderOpen className="w-5 h-5 text-purple-600 mr-2" />
-                    <span className="text-sm text-purple-600">
-                      {project.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                    {project.name}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
 
           <Modal
             isOpen={isModalOpen}
@@ -209,13 +209,31 @@ const SideMenu: React.FC = () => {
           </Modal>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-start h-full pt-4">
-          <button
-            onClick={toggleMenu}
-            className="p-2 rounded-full bg-purple-500 hover:bg-purple-700 text-white"
-          >
-            <TfiLayout className="w-6 h-6" />
-          </button>
+        <div className="flex flex-col mt-4 h-full overflow-y-auto">
+          {filteredProjects.map((project) => (
+            <li
+              key={project.id}
+              className="flex items-center p-2 cursor-pointer rounded-lg bg-purple-100 hover:bg-purple-200 mt-2"
+              onClick={() => handleProjectClick(project.id)}
+            >
+              <HiOutlineFolderOpen className="w-5 h-5 text-purple-600 mr-2" />
+              <span
+                className="text-sm text-purple-600 truncate overflow-hidden whitespace-nowrap"
+                title={project.name}
+              >
+                {project.name}
+              </span>
+              <button
+                className="text-purple-600 font-bold text-lg ml-auto"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleModal();
+                }}
+              >
+                <RxPlus />
+              </button>
+            </li>
+          ))}
         </div>
       )}
     </div>

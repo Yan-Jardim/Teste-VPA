@@ -4,7 +4,6 @@ import Image from 'next/image';
 import SideMenu from '@/components/pages/Menu';
 import { HiOutlineFolderOpen } from 'react-icons/hi';
 import TextInput from '@/components/global/TextInput/TextInput';
-import ActiveProjectSelect from '@/components/pages/ActiveProjectSelect';
 import CreateProjectButton from '@/components/pages/NewProject';
 import CreateFirstProject from '@/components/pages/CreateFirstProject';
 
@@ -32,7 +31,6 @@ export default function Home() {
                 placeholder="Faça sua busca..."
                 className="flex-grow"
               />
-              <ActiveProjectSelect />
               <div className="flex flex-col items-center space-y-2">
                 <CreateProjectButton />
                 <Image
