@@ -1,6 +1,6 @@
-# CUBEVIS
+# VPV
 
-**CUBEVIS** é uma aplicação que gerencia e visualiza projetos, oferecendo funcionalidades para criar, editar e visualizar informações detalhadas sobre projetos e suas sessões.
+**VPV** é uma aplicação que gerencia e visualiza projetos, oferecendo funcionalidades para criar, editar e visualizar informações detalhadas sobre projetos e suas sessões.
 
 ## Funcionalidades
 
